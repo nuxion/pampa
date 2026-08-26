@@ -1,0 +1,37 @@
+# OpenAI model choices for the /model prompt.
+# Prices are USD per 1,000,000 tokens (standard, non-cached pricing).
+# Verify prices at https://openai.com/api/pricing before publishing changes.
+[[models]]
+code_name = "gpt-5.6-sol"
+friendly_name = "GPT-5.6 Sol"
+token_input_price = 4.0
+token_output_price = 20.00
+description = "highest-capability general-purpose model; $4.0/M input tokens and $20.00/M output tokens."
+visible = true
+reasoning = "none,low,medium,high,xhigh,max"
+
+[[models]]
+code_name = "gpt-5.6-terra"
+friendly_name = "GPT-5.6 Terra"
+token_input_price = 2.0
+token_output_price = 12.00
+description = "It Balances intelligence and cost; $2.0/M input tokens and $12.00/M output tokens."
+visible = true
+reasoning = "none,low,medium,high,xhigh,max"
+
+[[models]]
+code_name = "gpt-5.6-luna"
+friendly_name = "GPT-5.6 Luna"
+token_input_price = 0.20
+token_output_price = 1.20
+description = "optimized for cost-sensitive workloads; $2.0/M input tokens and $12.00/M output tokens."
+visible = true
+reasoning = "none,low,medium,high,xhigh,max"
+
+[[models]]
+code_name = "gpt-5.3-codex"
+friendly_name = "GPT-5.3 Codex"
+token_input_price = 1.75
+token_output_price = 14.00
+description = "optimized for agentic coding tasks in CODEX; $1.75/M input tokens and $14.00/M output tokens."
+reasoning = "none,low,medium,high,xhigh,max"

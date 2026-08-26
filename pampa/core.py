@@ -1,4 +1,6 @@
 import json
+import tomllib
+from pathlib import Path
 import os
 import platform
 from dataclasses import dataclass
@@ -6,6 +8,10 @@ from typing import Any, Callable
 
 from openai import OpenAI
 from pampa.tools import bash
+from prompt_toolkit import PromptSession
+from pampa.chat import SlashCommandCompleter, COMMANDS, DESCRIPTIONS
+from prompt_toolkit.shortcuts import choice
+
 
 MODEL = "gpt-5.6-luna"  # GPT-5.6 Luna
 # MODEL = "gpt-5-nano"
@@ -19,6 +25,31 @@ class ToolSpec:
     schema: dict[str, Any]
     handler: Callable[..., Any]
     requires_confirmation: Callable[[dict[str, Any]], bool] | None = None
+
+
+def load_models() -> list[dict[str, Any]]:
+    """Load the model choices from the bundled TOML catalogue."""
+    models_file = Path(__file__).with_name("models.toml")
+    with models_file.open("rb") as file:
+        catalogue = tomllib.load(file)
+
+    models = catalogue.get("models", [])
+    if not isinstance(models, list):
+        raise ValueError("models.toml must contain a [[models]] list")
+    
+    return [m for m in models if m.get("visible")]
+
+
+def model_options() -> list[tuple[str, str]]:
+    """Build the options displayed by prompt-toolkit's model chooser."""
+    return [
+        (
+            model["code_name"],
+            f'{model["friendly_name"]} — {model["description"]}',
+        )
+        for model in load_models()
+    ]
+
 
 
 def should_i_execute(command: str) -> bool:
@@ -46,6 +77,7 @@ system_prompt = f"""
 you are an expert coding assistant called Pampa. You help users by reading files,
 executing commands, editing code, and writing new files.
 
+Available Tools:
 {", ".join(available_tools)}
 
 ----
@@ -112,31 +144,49 @@ def process_response(response, context):
     return tool_called
 
 
-try:
+
+def main():
     print("Welcome to Pampa Coding assistant\n")
     context = []
+    session = PromptSession(completer=SlashCommandCompleter(COMMANDS))
     while True:
-        msg = input(">>> ")
-
-        if msg.startswith("/"):
-            if msg == "/clear":
+        try:
+            # msg = input(">>> ")
+            line = session.prompt("You> ")
+            if line in ("/exit", "/quit"):
+                break
+            if line == "/clear":
                 context = []
                 print("Context cleared")
+            elif line == "/help":
+                for command in COMMANDS:
+                    print(f"{command:<10} {DESCRIPTIONS[command]}")
+            elif line == "/model":
+                options = model_options()
+                if not options:
+                    print("No models are configured.")
+                    continue
+                result = choice(
+                    message="Please choose a Model:",
+                    options=options,
+                    default=options[0][0],
+                )
+                print(f"You have chosen: {result}")
             else:
-                print(f"cmd: {msg} unknown")
-            continue
 
-        context.append({"role": "user", "content": msg})
-        print("Thinking...")
+                context.append({"role": "user", "content": line})
+                print("Thinking...")
 
-        response = create_response(context)
-        breakpoint()
-        context.extend(response.output)
+                response = create_response(context)
+                context.extend(response.output)
 
-        while process_response(response, context):
-            response = create_response(context)
-            context.extend(response.output)
+                while process_response(response, context):
+                    response = create_response(context)
+                    context.extend(response.output)
 
-        print("\n")
-except KeyboardInterrupt:
-    print("\nThanks! See you")
+            print("\n")
+        except (EOFError, KeyboardInterrupt):
+            print("\nThanks! See you")
+            break
+if __name__ == "__main__":
+    main()

@@ -12,6 +12,7 @@ classifiers = [
 ]
 dependencies = [
     "openai>=2.53.0",
+    "prompt-toolkit>=3.0.53",
 ]
 [build-system]
 requires = ["hatchling"] 
