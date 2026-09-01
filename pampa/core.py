@@ -145,7 +145,7 @@ def process_response(response, context):
 
 
 
-def main():
+def chat_assistant():
     print("Welcome to Pampa Coding assistant\n")
     context = []
     session = PromptSession(completer=SlashCommandCompleter(COMMANDS))
@@ -189,4 +189,4 @@ def main():
             print("\nThanks! See you")
             break
 if __name__ == "__main__":
-    main()
+    chat_assistant()

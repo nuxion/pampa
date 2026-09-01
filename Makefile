@@ -73,8 +73,24 @@ build-local:
 	docker build . -t ${DOCKERID}/${PROJECTNAME}
 	docker tag ${DOCKERID}/${PROJECTNAME} ${DOCKERID}/${PROJECTNAME}:${VERSION}
 
+bump:
+	@test -n "$(LEVEL)" || (echo "Usage: make bump LEVEL=patch|minor|major"; exit 1)
+	uv version --bump "$(LEVEL)"
+	uv lock
+	@echo "Version is now $$(uv version --short)"
+
 build:
-	echo "Not implemented"
+	# rm -rf dist build
+	uv build
+	uvx shiv \
+		--console-script pampa \
+		--compressed \
+		--reproducible \
+		--output-file dist/pampa \
+		dist/pampa-${VERSION}-py3-none-any.whl
+	chmod +x dist/pampa
+	sha256sum dist/pampa > dist/SHA256SUMS
+	@echo "Built dist/pampa"
 
 publish:
 	echo "Not implemented"

@@ -1,3 +1,6 @@
+# ROADMAP
+
+
 - [ ] add edit tool 
 - [ ] add browser tool
 - [ ] add search tool
@@ -7,4 +10,5 @@
 - [ ] add logging
 - [ ] add token usage
 - [ ] add session/task concept
-- [ ] add installer. One executable. 
+- [ ] add installer. One executable. Check shiv .pyz (requires python installed in the host).
+- [ ] add cli (click)

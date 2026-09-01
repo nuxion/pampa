@@ -1,6 +1,6 @@
 [project]
 name = "pampa"
-version = "0.1.1"
+version = "0.1.2"
 description = "A AI cli agent, for educational and testing purposes"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -11,9 +11,13 @@ classifiers = [
   "Development Status :: 4 - Beta",
 ]
 dependencies = [
+    "click>=8.5.0",
     "openai>=2.53.0",
     "prompt-toolkit>=3.0.53",
 ]
+[project.scripts]
+pampa = "pampa.cli:main"
+
 [build-system]
 requires = ["hatchling"] 
 build-backend = "hatchling.build"

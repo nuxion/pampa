@@ -39,7 +39,13 @@ export OPENAI_API_KEY="your-api-key"
 
 ## Usage
 
-Pampa currently exposes its interactive assistant as a Python module:
+Pampa exposes its interactive assistant through the `pampa` command:
+
+```console
+uv run pampa
+```
+
+When running directly from a checkout, the module form remains available:
 
 ```console
 uv run python -m pampa.core
